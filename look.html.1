@@ -1,0 +1,38 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">	
+  <link rel="stylesheet" href="./jquery.mobile-1.4.5.min.css">
+  <script src="./jquery-1.11.1.min.js"></script>
+  <script src="./jquery.mobile-1.4.5.min.js"></script>
+
+  <title>获奖名单</title>
+
+<script>
+$.getJSON('look.json',function(data){
+  var content = "<h2>获奖名单:</h2>" +
+    		"<ol data-role='listview'>" ;
+  for (i=1;i<data.length;i++){
+    content+= "<li><a href='#'>" + data[i].id  + "</a></li>" 
+  }
+  content+="</ol>"
+  //console.log(data);
+  $("#look").html(""+content);
+});
+</script>
+
+</head>
+
+<body>
+
+<div data-role="page" id="pageone">
+  <div data-role="header">
+    <h1>获奖名单</h1>
+  </div>
+
+  <div data-role="main" class="ui-content" id="look">
+  </div>
+</div> 
+
+
+</body>
+</html>

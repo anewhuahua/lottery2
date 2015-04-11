@@ -1,0 +1,38 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./jquery.mobile-1.4.5.min.css">
+  <script src="./jquery-1.11.1.min.js"></script>
+  <script src="./jquery.mobile-1.4.5.min.js"></script>
+  <title>答题抽奖</title>
+
+  <script>
+  function checkMobile() {
+    var mobile = document.forms["LoginForm"]["login"].value;
+    var re = /^1\d{10}$/
+    if (re.test(mobile)) {
+      return true;
+    } else {
+      alert("请输入正确的手机号码");
+      return false;
+    }
+  }
+  </script>
+</head>
+<body>
+    <div data-role="page">
+     <div data-role="main" class="ui-content">
+      <div class="login">
+      <h1>欢迎参加答题抽奖</h1>
+      <form method="post" action="login" onsubmit="return checkMobile()" name="LoginForm">
+        <p><input type="text" name="login" value="" placeholder="请输入手机号码"></p>
+        <p class="submit"><input type="submit" name="submit" value="登入"></p>
+      </form>
+      </div>
+     </div>
+    </div>
+
+
+</body>
+</html>
+

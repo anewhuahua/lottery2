@@ -1,0 +1,34 @@
+<html>
+<head>
+  <title>获奖名单</title>
+
+<script src="./jquery-1.11.1.min.js"></script>
+<script>
+$.getJSON('look.json',function(data){
+  var content = "<h2>获奖名单:</h2>" +
+    		"<ol>" ;
+  for (i=1;i<data.length;i++){
+    content+= "<li><a href='#'>" + data[i].id  + "</a></li>" 
+  }
+  content+="</ol>"
+  //console.log(data);
+  $("#look").html(""+content);
+});
+</script>
+
+</head>
+
+<body>
+
+<div>
+  <div>
+    <h1>获奖名单</h1>
+  </div>
+
+  <div id="look">
+  </div>
+</div> 
+
+
+</body>
+</html>

@@ -1,0 +1,210 @@
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">	
+  <link rel="stylesheet" href="./jquery.mobile-1.4.5.min.css">
+  <script src="./jquery-1.11.1.min.js"></script>
+  <script src="./jquery.mobile-1.4.5.min.js"></script>
+  <script type="text/javascript" src="./jquery.easing.min.js"></script>
+  <script type="text/javascript" src="./jQueryRotate.js"></script>
+  <title>答题抽奖</title>
+
+<script>
+var qr = [];
+
+function checkq(index) {
+  var qa = $("#q"+index+" input[type='radio']:checked").val();
+  console.log(qa+" "+qr[index]);
+  if(qa==qr[index]) {
+    return true;
+  } else {
+    alert("答案错误，请重新选择");
+    return false;
+  }
+}
+
+function checklot(){
+if (!checkq(3)) return false;
+var angle = 0;
+setInterval(function(){
+     angle+=20;
+     $("#image").rotate(angle);
+},50);
+return true;
+/*
+var a = Math.floor(Math.random() * 360);
+$("#image").rotate({
+            duration:4000,
+            angle: 0, 
+            animateTo:1800+a,
+            easing: $.easing.easeOutSine,
+            callback: function(){
+              alert('中奖了！');
+            }
+});
+*/
+}
+
+
+var mobile="";
+$(document).ready(function() {
+
+$("#postform").click(function(event) {
+  //$(this).width($(this).width() + 20); 
+  //$(this).height($(this).height() + 20); 
+  $(this).fadeOut(100);
+  $(this).fadeIn(100);
+  $("#lookform").submit();
+});
+$("#postform").hover(function() {
+  $(this).fadeOut(100);
+  $(this).fadeIn(100);
+});
+
+$.getJSON('qiz.json',function(data){
+  questions = data.questions;
+  console.log(questions);
+  console.log(questions[0].q);
+
+  for(i=0;i<questions.length;i++) {
+  j = i+1;
+  qname = "q"+j;
+  var qiz = "";
+  qiz = "<fieldset data-role='controlgroup'><legend>"+questions[i].q+"</legend>" + 
+	"<label for='a'>" + questions[i].a + "</label>" +
+        "<input type='radio' name='" + qname + "' id='a' value='" + questions[i].a + "'>" +
+	"<label for='b'>" + questions[i].b + "</label>" +
+        "<input type='radio' name='" + qname + "' id='b' value='" + questions[i].b + "'>" +
+	"<label for='c'>" + questions[i].c + "</label>" +
+        "<input type='radio' name='" + qname + "' id='c' value='" + questions[i].c + "'>" +
+	"<label for='d'>" + questions[i].d + "</label>" +
+        "<input type='radio' name='" + qname + "' id='d' value='" + questions[i].d + "'> </fieldset>" ;
+  $("#q"+j).html(""+qiz);
+  qr[j] = questions[i].r
+  }
+});
+
+
+$("#hid").hide();
+
+$("#join").click(function(event) {
+  var value = $.trim($("#mobile").val());
+  console.log(value);
+  var re = /^1\d{10}$/
+  if (re.test(value)) {
+    mobile=value;
+    $("#hid").val(mobile);
+    return true;
+  } else {
+    alert("请输入正确的手机号码");
+    return false;
+  }
+});
+
+
+/*
+$("#lot").click(function(event)  {
+});
+*/
+
+});
+
+
+
+
+
+</script>
+
+<style>
+.ui-page
+{
+   width: 100%;
+   height:auto;
+   top: 0px;
+   left: 0px;
+   background: transparent url(./bkg.jpg) no-repeat center center;
+}
+</style>
+
+
+
+</head>
+
+<body>
+
+<div data-role="page" id="login">
+  <div data-role="header">
+    <h1>欢迎参加答题抽奖</h1>
+  </div>
+
+  <div data-role="main" class="ui-content">
+    <p><input type="text" name="login" id="mobile" value="" placeholder="请输入手机号码"></p>
+    <a href="#pageone" class="ui-btn" id="join">参加答题</a>
+  </div>
+</div> 
+
+<div data-role="page" id="pageone">
+  <div data-role="header">
+    <h1>第一题</h1>
+  </div>
+
+  <div data-role="main" class="ui-content">
+    <form id="q1">
+    </form>
+    <a href="#pagetwo" class="ui-btn" onclick="return checkq(1);">下一题</a>
+  </div>
+</div> 
+
+<div data-role="page" id="pagetwo">
+  <div data-role="header">
+    <h1>第二题</h1>
+  </div>
+
+  <div data-role="main" class="ui-content">
+    <form id="q2">
+    </form>
+    <a href="#pagethree" class="ui-btn" onclick="return checkq(2);">下一题</a>
+  </div>
+</div> 
+
+<div data-role="page" id="pagethree">
+  <div data-role="header">
+    <h1>第三题</h1>
+  </div>
+  <div data-role="main" class="ui-content">
+  <!--
+  <form method="post" action="./question">
+  <input type="submit" value="lotteryhaha">
+  </form>
+  -->
+  <form id="q3">
+  </form>
+  <a href="#lottery" class="ui-btn" id="lot"  onclick="return checklot();">进入抽奖页面</a>
+
+  <!--<a href="./lottery" class="ui-btn">lottery</a>-->
+  </div>
+</div> 
+
+<div data-role="page" id="lottery">
+  <div data-role="header">
+  </div>
+
+  <div data-role="main" class="ui-content">
+  	<form method="post" action="./look" id="lookform">
+	<input type="text" name="id" placeholder="请输入手机号码" id="hid"> 
+  	<!--<input type="submit" value="抽奖">-->
+  	</form>
+
+	<div class="ui-grid-a"> <div class="ui-block-a" style="width: 35%;" id="postform">
+        <img src="./2.png" style="width: 100%;" /> </div></div>
+
+	<div class="ui-grid-a"> <div class="ui-block-a" style="width: 100%; ">
+        <img src="./1.png" style="width: 100%;" id ="image"/> </div></div>
+
+
+
+  </div>
+</div> 
+
+
+</body>
+</html>
