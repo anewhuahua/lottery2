@@ -2,44 +2,20 @@ var path = require('path');
 var express    = require('express'); var bodyParser = require('body-parser');
 var app        = express();
 var fs = require('fs');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/test');
+var JP = require('./models/jp1');
+var Award = require('./models/award1');
 
 var port     = 2020; 
 var router = express.Router();
 
+//tyson
+var intv = 1;
 var people = 0;
 var start = 0;
-
+//var start = 1;
 var online = {};
-
-var jiaping = function(id) {
-  if (start) {
-    online[id]=id;
-    people = people+1;
-
-    if(people%3 == 0) {
-      fs.readFile(__dirname + '/look.json', function (err, data) {
-    	if (err) {
-          console.log("look up nok");
-    	}
-        data = JSON.parse(data); 
-	data.push({id:id});
-	console.log(data);
-        fs.writeFile('look.json', JSON.stringify(data), function (err) {
-          if (err) {
-            // todo
-            console.log("look insert nok");
-    	  }
-          console.log("look insert okay");
-        });
-      });
-      return "中奖了";
-    } else {
-      return "抱歉未中奖";
-    }
-  } else {
-    return "抽奖活动尚未开始，请耐心等候";
-  }
-}
 
 
 app.use(bodyParser.urlencoded({ extended: true}));
@@ -56,55 +32,114 @@ router.use(function(req, res, next) {
 });
 
 
+router.route('/selfcheck')
+  .post(function(req, res) {
+    id = req.body.id;
+    if(online[id]){
+       Award.find({mobile:id}, function(err,aw){
+	 if(aw)
+	   res.json({message:"bingo", time:aw.time, jiaping, aw.jiaping})
+         else 
+	   res.json({message:"sorry"});
+       });
+    } else {
+       if(start==0){
+         Award.find({mobile:id}, function(err,aw){
+	 if(aw)
+	   res.json({message:"bingo", time:aw.time, jiaping, aw.jiaping})
+         else 
+	   res.json({message:"sorry"});
+         });
+       } else {
+         res.json({message:"start"});
+       }
+    }
+  });
 
 
-router.route('/start') 
+router.route('/admin') 
   .get(function(req, res){
-    res.sendFile(__dirname + '/start.html');
+    res.sendFile(__dirname + '/admin.html');
   })
   .post(function(req, res) {
     console.log("start lottery");
     start = 1;
-    fs.writeFile('look.json', '[{"id":"占位"}]', function (err) {
-      if (err) {
-	console.log("error");
-      }
-      console.log("start okay");
+    people = 0;
+    online={};
+    JP.remove({}, function(err) { 
+      console.log('collection removed') 
+    });
+    var jp = new JP();
+    jp.jp = "ipad";
+    jp.amount = 1;
+    jp.save();
+    var jp = new JP();
+    jp.jp = "mini";
+    jp.amount = 0;
+    jp.save();
+
+    Award.remove({}, function(err) { 
+      console.log('collection removed') 
     });
 
     res.json({message:"start lottery"});
   });
 
+var jiaping = function(id, cb) {
+  if (start) {
+    online[id]=id;
+    people = people+1;
+    if(people % intv == 0) {
 
+      JP.findOne({amount: {$gt:0}}, function(err,jp){
+	if(jp) {
+	  console.log(jp);
+          jp.amount-=1;
+	  console.log(jp);
+	  jp.save(function (err) {
+            if(err) {
+              console.error('ERROR!');
+            }
+	  });
+	
+	  var award = new Award();
+      	  award.mobile = id;
+      	  award.jiaping = jp.jp;
+	  award.save();
+
+          var currentdate = new Date(); 
+          var datetime = "" + currentdate.getDate() + "/"
+                + (currentdate.getMonth()+1)  + "/" 
+                + currentdate.getFullYear() + " @ "  
+                + currentdate.getHours() + ":"  
+                + currentdate.getMinutes() + ":" 
+                + currentdate.getSeconds();
+
+          cb({message: "bingo", jiaping: jp.jp, time: datetime});
+	} else {
+      	  cb({message: "sorry"});
+	}
+      });
+    } else {
+      cb({message: "sorry"});
+    }
+  } else {
+    cb({message: "wait"});
+  }
+}
 router.route('/look') 
   .post(function(req, res) {
     var id = req.body.id;
     if (online[id]) {
       console.log("repeat");
-      var content = "<html><head><meta charset='UTF-8'></head><body><h1>"+ 
-                    "请不要重复抽奖</h1></body></html>";
-      res.end(content);
+      res.json({message:"done", jiaping:"ipad"});
     } else {
-      var content = "<html><head><meta charset='UTF-8'></head><body><div>"+ jiaping(id) +
-                    "</div><div><a href='http://115.28.11.51:2020/lookup'>查看获奖名单</a></div></body></html>"
-      res.end(content);
+      jiaping(id, function(content){
+	res.json(content);
+      });
     }
   });
-router.route('/lookup') 
-  .get(function(req, res) {
-      var content = "<html><head><meta charset='UTF-8'></head><body><h1>中奖名单</h1><ol>" ;
-      fs.readFile(__dirname + '/look.json', function (err, data) {
-    	if (err) {
-          console.log("look up nok");
-    	}
-        data = JSON.parse(data); 
-  	for (i=1;i<data.length;i++){
-          content+= "<li><a href='#'>" + data[i].id  + "</a></li>"
-        }
-        content+="</ol></body></html>";
-      	res.end(content);
-      });
-  });
+
 
 router.route('/question')
   .get(function(req, res) {
@@ -116,7 +151,7 @@ router.route('/question')
     //}
   })
   .post(function(req, res) {
-    res.redirect('./question#lottery');
+    res.json({message: "wait"});
   });
 
 router.route('/qiz/:id') 

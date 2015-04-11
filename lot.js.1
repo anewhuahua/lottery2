@@ -2,13 +2,17 @@ var path = require('path');
 var express    = require('express'); var bodyParser = require('body-parser');
 var app        = express();
 var fs = require('fs');
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/test');
 
 var port     = 2020; 
 var router = express.Router();
 
 var people = 0;
-var start = 0;
 
+//tyson
+//var start = 0;
+var start = 1;
 var online = {};
 
 var jiaping = function(id) {
@@ -56,6 +60,19 @@ router.use(function(req, res, next) {
 });
 
 
+router.route('/selfcheck')
+  .post(function(req, res) {
+    id = req.body.id;
+    if(online[id]){
+       res.json({message:"done", jiaping:"ipad"});
+    } else {
+       if(start==0){
+         res.json({message:"wait"});
+       } else {
+         res.json({message:"start"});
+       }
+    }
+  });
 
 
 router.route('/start') 
@@ -90,21 +107,7 @@ router.route('/look')
       res.end(content);
     }
   });
-router.route('/lookup') 
-  .get(function(req, res) {
-      var content = "<html><head><meta charset='UTF-8'></head><body><h1>中奖名单</h1><ol>" ;
-      fs.readFile(__dirname + '/look.json', function (err, data) {
-    	if (err) {
-          console.log("look up nok");
-    	}
-        data = JSON.parse(data); 
-  	for (i=1;i<data.length;i++){
-          content+= "<li><a href='#'>" + data[i].id  + "</a></li>"
-        }
-        content+="</ol></body></html>";
-      	res.end(content);
-      });
-  });
+
 
 router.route('/question')
   .get(function(req, res) {
@@ -116,7 +119,7 @@ router.route('/question')
     //}
   })
   .post(function(req, res) {
-    res.redirect('./question#lottery');
+    res.json({message: "wait"});
   });
 
 router.route('/qiz/:id') 
