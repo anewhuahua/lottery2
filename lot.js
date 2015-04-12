@@ -35,24 +35,14 @@ router.use(function(req, res, next) {
 router.route('/selfcheck')
   .post(function(req, res) {
     id = req.body.id;
-    if(online[id]){
-       Award.find({mobile:id}, function(err,aw){
-	 if(aw)
-	   res.json({message:"bingo", time:aw.time, jiaping, aw.jiaping})
-         else 
-	   res.json({message:"sorry"});
-       });
+    if (start == 0){
+      res.json({message:"wait"});
     } else {
-       if(start==0){
-         Award.find({mobile:id}, function(err,aw){
-	 if(aw)
-	   res.json({message:"bingo", time:aw.time, jiaping, aw.jiaping})
-         else 
-	   res.json({message:"sorry"});
-         });
-       } else {
-         res.json({message:"start"});
-       }
+      if(online[id]) {
+        res.json({message:"done"});
+      } else {
+        res.json({message:"go"});
+      }
     }
   });
 
@@ -61,6 +51,25 @@ router.route('/admin')
   .get(function(req, res){
     res.sendFile(__dirname + '/admin.html');
   })
+  .post(function(req, res){
+    var msg = req.body.message;
+    if(msg=="login") {
+      var user = req.body.user;
+      var pwd  = req.body.pwd;
+      if (user=="admin" && pwd=="ty2015") {
+	      res.json({message:"login"});
+      } else {
+	      res.json({message:"logout"});
+      }
+    } else if (msg == "go"){
+      start = 1;
+      res.json({message:"go"});
+    } else if (msg == "stop"){
+      start = 0;
+      res.json({message:"stop"});
+    }
+  });
+/*
   .post(function(req, res) {
     console.log("start lottery");
     start = 1;
@@ -81,9 +90,9 @@ router.route('/admin')
     Award.remove({}, function(err) { 
       console.log('collection removed') 
     });
-
     res.json({message:"start lottery"});
   });
+*/
 
 var jiaping = function(id, cb) {
   if (start) {
@@ -135,9 +144,22 @@ router.route('/look')
       res.json({message:"done", jiaping:"ipad"});
     } else {
       jiaping(id, function(content){
-	res.json(content);
+	    res.json(content);
       });
     }
+  });
+
+router.route('/check') 
+  .post(function(req, res) {
+    var id = req.body.id;
+    Award.findOne({mobile:id}, function(err,aw){
+     console.log(aw);
+     if(aw){
+       res.json({message:"bingo", time:aw.time, jiaping: aw.jiaping})
+     } else {
+       res.json({message:"sorry"});
+     }
+    });
   });
 
 
@@ -154,83 +176,18 @@ router.route('/question')
     res.json({message: "wait"});
   });
 
-router.route('/qiz/:id') 
-  .get(function(req, res) {
-      var qid = req.params.id;
-      fs.readFile(__dirname + '/qiz.json', function (err, data) {
-    	if (err) {
-      	  res.writeHead(500);
-          return res.end('Error loading question');
-    	}
-	var qiz = JSON.parse(data);
-	console.log(qiz.questions.length);
 
-	if (qid > qiz.questions.length){
-      	  res.writeHead(500);
-          return res.end('Error loading question');
-	}
-	
-	qid = qid-1;
-	sid = qid+1;
-	console.log(qiz.questions[qid].q);
-	var select = "<select form='tyson'  name='r'>" +
-  		"<option value ='" +  qiz.questions[qid].a + "'>" + qiz.questions[qid].a + "</option>" +
-  		"<option value ='" +  qiz.questions[qid].b + "'>" + qiz.questions[qid].b + "</option>" +
-  		"<option value ='" +  qiz.questions[qid].c + "'>" + qiz.questions[qid].c + "</option>" +
-  		"<option value ='" +  qiz.questions[qid].d + "'>" + qiz.questions[qid].d + "</option>" +
-		"</select>";
-	var form = "<html><head><meta charset='UTF-8'></head><body>"+
-		"<form method='post' id='tyson' action='/qiz/"+ sid + "'>" +
-		"<p><textarea name='q' rows='5' cols='30'>" +  qiz.questions[qid].q + 
-		"</textarea></p>" +
-		"<p><input type='text' name='a' value='" + qiz.questions[qid].a + "' placeholder='" + qiz.questions[qid].a + "'>A</p>" +
-		"<p><input type='text' name='b' value='" + qiz.questions[qid].b + "' placeholder='" + qiz.questions[qid].b + "'>B</p>" +
-		"<p><input type='text' name='c' value='" + qiz.questions[qid].c + "' placeholder='" + qiz.questions[qid].c + "'>C</p>" +
-		"<p><input type='text' name='d' value='" + qiz.questions[qid].d + "' placeholder='" + qiz.questions[qid].d + "'>D</p>" +
-	        "<p>"+select+"正确答案</p>"+
-  		"<p><input type='submit' value='提交问题'></p>" +
-  		"</form></body></html>";
-        res.writeHead(200, {'Content-Type': 'text/html',
-			    'Content-Encoding':'utf-8',
-        		    'charset' : 'utf-8'});
- 	res.end(form);	
-      });
-
-  })
-  .post(function(req, res) {
-      var qid = req.params.id;
-      fs.readFile(__dirname + '/qiz.json', function (err, data) {
-    	if (err) {
-      	  res.writeHead(500);
-          return res.end('Error loading question');
-    	}
-	var qiz = JSON.parse(data);
-	console.log(qiz.questions.length);
-
-	if (qid > qiz.questions.length){
-      	  res.writeHead(500);
-          return res.end('Error loading question');
-	}
-     	qid = qid-1;
-     	sid = qid+1;
-
-	qiz.questions[qid].q = req.body.q;
-	qiz.questions[qid].a = req.body.a;
-	qiz.questions[qid].b = req.body.b;
-	qiz.questions[qid].c = req.body.c;
-	qiz.questions[qid].d = req.body.d;
-	qiz.questions[qid].r = req.body.r;
-	
-	fs.writeFile('qiz.json', JSON.stringify(qiz), function (err) {
+router.route('/qiz')
+  .post(function(req, res){
+    var qiz = req.body.qiz;
+    console.log(qiz);
+    qiz = {questions:qiz};
+	  fs.writeFile('qiz.json', JSON.stringify(qiz), function (err) {
     	  if (err) {
-     	    res.writeHead(500);
-            return res.end('Error Writing question');
+     	    res.json({message:"question update ok"});
     	  }
-      	  res.writeHead(500);
-          return res.end('success update');
-	});
-
-      });
+     	    res.json({message:"question update fail"});
+	  });
   });
 
 

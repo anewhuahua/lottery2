@@ -7,13 +7,301 @@
 
   <title>活动开始</title>
 
+<script>
+
+
+var jiaping = [
+{jp:"一等奖", amount:1},
+{jp:"二等奖", amount:2},
+{jp:"三等奖", amount:3}];
+
+$(document).ready(function() {
+
+
+$("#q1o").click(function(event){
+
+});
+$("#q1o").click(function(event){
+   options= "<option value ='" +   $("#q1a").val() + "'>" +  $("#q1a").val() + "</option>" + 
+            "<option value ='" +   $("#q1b").val() + "' selected>" +  $("#q1b").val() + "</option>" + 
+            "<option value ='" +   $("#q1c").val() + "'>" +  $("#q1c").val() + "</option>" + 
+            "<option value ='" +   $("#q1d").val() + "'>" +  $("#q1d").val() + "</option>" ; 
+   $("#q1r").html(options);
+});
+$("#q2o").click(function(event){
+   options= "<option value ='" +   $("#q2a").val() + "'>" +  $("#q2a").val() + "</option>" + 
+            "<option value ='" +   $("#q2b").val() + "' selected>" +  $("#q2b").val() + "</option>" + 
+            "<option value ='" +   $("#q2c").val() + "'>" +  $("#q2c").val() + "</option>" + 
+            "<option value ='" +   $("#q2d").val() + "'>" +  $("#q2d").val() + "</option>" ; 
+   $("#q2r").html(options);
+});
+$("#q3o").click(function(event){
+   options= "<option value ='" +   $("#q3a").val() + "'>" +  $("#q3a").val() + "</option>" + 
+            "<option value ='" +   $("#q3b").val() + "' selected>" +  $("#q3b").val() + "</option>" + 
+            "<option value ='" +   $("#q3c").val() + "'>" +  $("#q3c").val() + "</option>" + 
+            "<option value ='" +   $("#q3d").val() + "'>" +  $("#q3d").val() + "</option>" ; 
+   $("#q3r").html(options);
+});
+
+$.getJSON('qiz.json',function(data){
+  questions = data.questions;
+  console.log(questions);
+
+  for(i=0;i<questions.length;i++) {
+    j = i+1;
+    qname = "q"+j;
+    var qiz = "";
+    $("#"+qname+"q").val(questions[i].q);
+    $("#"+qname+"a").val(questions[i].a);
+    $("#"+qname+"b").val(questions[i].b);
+    $("#"+qname+"c").val(questions[i].c);
+    $("#"+qname+"d").val(questions[i].d);
+
+    options="<option value ='" +  questions[i].a + "'>" + questions[i].a + "</option>" + 
+            "<option value ='" +  questions[i].b + "' selected>" + questions[i].b + "</option>" + 
+            "<option value ='" +  questions[i].c + "'>" + questions[i].c + "</option>" + 
+            "<option value ='" +  questions[i].d + "'>" + questions[i].d + "</option>" ; 
+
+    $("#"+qname+"r").html(options);
+   
+  }
+});
+
+
+/*
+$("#jp_insert").click(function(event){
+  var jp  = $("#jp_jp").val();
+  var num = $("#jp_amount").val();
+  if(!/^\+?[1-9][0-9]*$/.test(num)){
+    alert("请输入数字!");
+  } else {
+    jiaping.push({jp:jp, amount:num});
+
+    $.post( "/admin", {message:"login", user:user, pwd:pwd}, function(data) {
+    magic_content = "<ul data-role='listview' data-inset='true'>";
+    for (i=0;i<jiaping.length;i++){
+      magic_content+="<li><a href='#'><h2>"+ jiaping[i].jp +"</h2><p>数量:"+ jiaping[i].amount + "</p></a>"+
+                     "<a href='#' data-icon='delete'>删除</a>";
+    }
+    magic_content+="</ul>"
+    $("#magic").html(magic_content);
+    location.href = "#login";
+    location.reload();
+    });
+
+  }
+});
+*/
+
+$("#qizfinal").click(function(event){
+  var qiz = [];
+  for (i=0;i<3;i++){
+    var j = i+1;
+    qname="q"+j;
+    qiz.push({q:$("#"+qname+"q").val(), a:$("#"+qname+"a").val(), b:$("#"+qname+"b").val(),
+              c:$("#"+qname+"c").val(), d:$("#"+qname+"d").val(), r:$("#"+qname+"r").val()})
+  }
+  $.post("/qiz", {qiz:qiz}, function(data) {
+  });
+});
+
+$("#getinfo").click(function(event){
+  $.post( "/admin", {message:"stop"}, function(data) {
+  });
+});
+
+$("#go").click(function(event){
+  $.post( "/admin", {message:"go"}, function(data) {
+    $("#go").hide();
+    $("#stop").show();
+  });
+});
+$("#stop").click(function(event){
+  $.post( "/admin", {message:"stop"}, function(data) {
+    $("#stop").hide();
+    $("#go").show();
+  });
+});
+
+$("#auth").click(function(event){
+  user = $("#username").val();
+  pwd = $("#password").val();
+
+  $.post( "/admin", {message:"login", user:user, pwd:pwd}, function(data) {
+    if (data.message == "login"){
+      magic_content = "<ul data-role='listview' data-inset='true'>";
+      for (i=0;i<jiaping.length;i++){
+        magic_content+="<li><a href='#'><h2>"+ jiaping[i].jp +"</h2><p>数量:"+ jiaping[i].amount + "</p></a>"+
+                       "<a href='#' data-icon='delete'>删除</a>";
+      }
+      magic_content+="</ul>"
+      $("#magic").html(magic_content);
+      location.href = "#jiaping";
+    } else {
+      $("#notice").html("请输入正确的用户名密码");
+    }
+  });
+});
+
+
+
+
+
+});
+
+
+
+</script>
+
 </head>
 
 <body>
 
+<div data-role="page" id="login">
+<div data-role="header">
+    <h1>管理员登入</h1>
+</div>
+<div data-role="main" class="ui-content">
+    <form>
+      <p><input type="text" name="username" id="username" value="" placeholder="用户名"/></p>
+      <p><input type="password" name="password" id="password" value="" placeholder="密码"/></p>
+      <a href="#" class="ui-btn" id="auth">管理员登入</a>
+      <h2 id="notice" style="color:red"></h2>
+    </form>
+</div>
+</div>
+
+<div data-role="page" id="qiz1">
+
+<div data-role="panel" id="q1panel"> 
+  <h2>请选择正确答案</h2>
+  <select name="q1r" id="q1r">
+	</select>
+
+  <a href="#qiz2" class="ui-btn">下一题</a>
+</div> 
+
+<div data-role="header">
+    <h1>第一题</h1>
+</div>
+<div data-role="main" class="ui-content">
+        <div class="ui-field-contain">
+        <label for="q1q">题目:</label>
+        <textarea name="q1q" id="q1q"></textarea>
+        </div>
+        <h2>A:</h2>
+        <p><input type="text" name="q1a" id="q1a" value="" /></p>
+        <h2>B:</h2>
+        <p><input type="text" name="q1b" id="q1b" value="" /></p>
+        <h2>C:</h2>
+        <p><input type="text" name="q1c" id="q1c" value="" /></p>
+        <h2>D:</h2>
+        <p><input type="text" name="q1d" id="q1d" value="" /></p>
+        <a href="#q1panel" class="ui-btn" id="q1o">选择正确答案</a>
+</div>
+</div>
+<div data-role="page" id="qiz2">
+<div data-role="panel" id="q2panel"> 
+  <h2>请选择正确答案</h2>
+  <select name="q2r" id="q2r">
+	</select>
+
+  <a href="#qiz3" class="ui-btn">下一题</a>
+</div> 
+
+<div data-role="header">
+    <h1>第二题</h1>
+</div>
+<div data-role="main" class="ui-content">
+        <div class="ui-field-contain">
+        <label for="q2q">题目:</label>
+        <textarea name="q2q" id="q2q"></textarea>
+        </div>
+
+        <h2>A</h2>
+        <p><input type="text" name="q2a" id="q2a" value="" placeholder="A选项"/></p>
+        <h2>B</h2>
+        <p><input type="text" name="q2b" id="q2b" value="" placeholder="B选项"/></p>
+        <h2>C</h2>
+        <p><input type="text" name="q2c" id="q2c" value="" placeholder="C选项"/></p>
+        <h2>D</h2>
+        <p><input type="text" name="q2d" id="q2d" value="" placeholder="D选项"/></p>
+        <a href="#q2panel" class="ui-btn" id="q2o">选择正确答案</a>
+</div>
+</div>
+<div data-role="page" id="qiz3">
+<div data-role="panel" id="q3panel"> 
+  <h2>请选择正确答案</h2>
+  <select name="q3r" id="q3r">
+	</select>
+  <a href="#start" class="ui-btn" id='qizfinal'>提交服务器</a>
+</div> 
+
+<div data-role="header">
+    <h1>第三题</h1>
+</div>
+<div data-role="main" class="ui-content">
+      <div class="ui-field-contain">
+        <label for="q3q">题目:</label>
+        <textarea name="q3q" id="q3q"></textarea>
+        </div>
+
+        <h2>A</h2>
+        <p><input type="text" name="q3a" id="q3a" value="" placeholder="A选项"/></p>
+        <h2>B</h2>
+        <p><input type="text" name="q3b" id="q3b" value="" placeholder="B选项"/></p>
+        <h2>C</h2>
+        <p><input type="text" name="q3c" id="q3c" value="" placeholder="C选项"/></p>
+        <h2>D</h2>
+        <p><input type="text" name="q3d" id="q3d" value="" placeholder="D选项"/></p>
+        <a href="#q3panel" class="ui-btn" id="q3o">选择正确答案</a>
+</div>
+</div>
+
+
+
+
+<div data-role="page" id="start">
+<div data-role="panel" id="start_panel"> 
+  <h2>获奖名单</h2>
+  <div id="information">
+  </div>
+</div>
+
+<div data-role="header">
+    <h1>管理活动</h1>
+</div>
+<div data-role="main" class="ui-content">
+  <a href="#" class="ui-btn" id="go">开始</a>
+  <a href="#" class="ui-btn" id="stop">停止</a>
+  <a href="#start_panel" class="ui-btn" id="getinfo">获奖名单</a>
+  <a href="#qiz1" class="ui-btn" id="getqiz">修改题目</a>
+</div>
+</div>
+
+
+<div data-role="page" id="jiaping">
+
+<div data-role="header">
+    <h1>奖品管理</h1>
+</div>
+<div data-role="main" class="ui-content">
+<!--    <a href="#jp_panel" class="ui-btn">增加奖项</a>-->
+      <p id="magic">
+      </p>
+
+      <a href="#start" class="ui-btn" id="next">下一步</a>
+</div>
+</div>
+
+
+<!--
 <form method="post" action="./admin">
 <input type="submit" value="活动开始">
 </form>
+-->
+
+
 
 </body>
 </html>

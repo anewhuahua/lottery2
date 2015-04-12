@@ -19,10 +19,25 @@ function checkq(index) {
   if(qa==qr[index]) {
     return true;
   } else {
-    alert("答案错误，请重新选择");
+    alert("回答错误，请重新答题");
     return false;
   }
 }
+
+function checkJP() {
+$.post( "/check", {id:mobile}, function(data) {
+  console.log(data);
+  if (data.message == "sorry"){
+     $("#sorry").html("<h2>抱歉，您没有中奖</h2>");
+     $("#information").html("");
+  } else if (data.message == "bingo"){
+     $("#jp_time").html("<h2>"+data.time+"</h2>");
+     $("#jp_jp").html("<h2>"+data.jiaping+"</h2>");
+     $("#jp_mobile").html("<h2>"+mobile+"</h2>");
+  }
+});
+}
+
 
 function checklot(){
 if (!checkq(3)) return false;
@@ -44,26 +59,19 @@ $("#image").rotate({
 
 	      $.post( "/look", {id:mobile}, function(data) {
 		console.log(data);
-		/*
-		if (data.message=="miss"){
-		  location.href = "#wait";
-		} else if (data.message=="done") {
-              	  alert('中奖了！');
-		  location.href = "#selfcheck";
-		}
-		*/
+		
 		if (data.message == "sorry"){
-              	  alert('抱歉，您没有中奖');
-		  location.href = "#selfcheck";
+              	  alert('很抱歉，您未中奖');
+		  location.href = "#done";
 		} else if (data.message == "wait"){
               	  alert('抽奖活动尚未开始，请耐心等待');
 		  location.href = "#wait";
 		} else if (data.message == "bingo") {
-              	  alert('中奖了！');
+              	  alert('恭喜您中奖，您可凭中奖界面至指定地点领奖');
 		  $("#jp_time").html("<h2>"+data.time+"</h2>");
 		  $("#jp_jp").html("<h2>"+data.jiaping+"</h2>");
 		  $("#jp_mobile").html("<h2>"+mobile+"</h2>");
-		  location.href = "#selfcheck";
+		  location.href = "#done";
 		}
 	      });
             }
@@ -126,14 +134,14 @@ $("#join").click(function(event) {
     $.post( "/selfcheck", {id:mobile}, function( data ) {
 	console.log(data);
   	//$( ".result" ).html( data );
-        if (data.message=="sorry"){
+        if (data.message=="wait"){
 	  //$("#join").attr("href", "#wait");
     	  location.href = "#wait";
-        } else if (data.message=="start"){
+        } else if (data.message=="go"){
 	  //$("#join").attr("href", "#pageone");
     	  location.href = "#pageone";
 	} else if (data.message=="done") {
-    	  location.href = "#selfcheck";
+    	  location.href = "#done";
 	}
     });
 
@@ -183,7 +191,7 @@ $("#lot").click(function(event)  {
 
   <div data-role="main" class="ui-content">
     <p><input type="text" name="login" id="mobile" value="" placeholder="请输入手机号码"></p>
-    <a href="#" class="ui-btn" id="join">参加答题</a>
+    <a href="#" class="ui-btn" id="join">进入</a>
   </div>
 </div> 
 
@@ -250,33 +258,45 @@ $("#lot").click(function(event)  {
   </div>
 </div> 
 
-<div data-role="page" id="selfcheck">
+<div data-role="page" id="done">
+  <div data-role="header">
+    <h1>抽奖活动</h1>
+  </div>
+
+  <div data-role="main" class="ui-content">
+  <h2>你已经参加过抽奖活动</h2>
+  <a href="#info" class="ui-btn" onclick="checkJP()">我的奖品</a>
+
+  </div>
+</div> 
+
+<div data-role="page" id="info">
   <div data-role="header">
     <h1>中奖信息</h1>
   </div>
 
-  <div data-role="main" class="ui-content">
-
-  <h2>你已经参加过抽奖活动</h2>
+  <div data-role="main" class="ui-content" id="info">
+  <p id="sorry"></p>
+  <div id="information">
   <p><h2>日期</h2></p>
   <p><span id="jp_time"></span></p>
   <p><h2>奖品</h2></p>
   <p><span id="jp_jp"></span></p>
   <p><h2>手机号</h2></p>
   <p><span id="jp_mobile"></span></p>
-
-
-  <a href="#login" class="ui-btn">返回</a>
+  </div>
+  <a href="javascript:history.back()" class="ui-btn">返回</a>
 
   </div>
 </div> 
 
 <div data-role="page" id="wait">
   <div data-role="header">
-    <h1>抽奖活动信息</h1>
+    <h1>抽奖活动</h1>
   </div>
   <div data-role="main" class="ui-content">
    <h2>抽奖活动尚未开始，请耐心等待</h2>
+  <a href="#info" class="ui-btn" onclick="checkJP();">我的奖品</a>
   </div>
 </div> 
 
