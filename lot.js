@@ -11,7 +11,7 @@ var port     = 2020;
 var router = express.Router();
 
 //tyson
-var intv = 1;
+var intv = 2;
 var people = 0;
 var start = 0;
 //var start = 1;

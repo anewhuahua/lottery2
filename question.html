@@ -49,6 +49,8 @@ setInterval(function(){
 },50);
 */
 
+
+alert("恭喜您，回答正确，点击进入抽奖界面");
 var a = Math.floor(Math.random() * 360);
 $("#image").rotate({
             duration:6000,
@@ -57,24 +59,24 @@ $("#image").rotate({
             easing: $.easing.easeOutSine,
             callback: function(){
 
-	      $.post( "/look", {id:mobile}, function(data) {
+	  $.post( "/look", {id:mobile}, function(data) {
 		console.log(data);
 		
 		if (data.message == "sorry"){
-              	  alert('很抱歉，您未中奖');
+      alert('很抱歉，您未中奖');
 		  location.href = "#done";
 		} else if (data.message == "wait"){
-              	  alert('抽奖活动尚未开始，请耐心等待');
+      alert('抽奖活动尚未开始，请耐心等待');
 		  location.href = "#wait";
 		} else if (data.message == "bingo") {
-              	  alert('恭喜您中奖，您可凭中奖界面至指定地点领奖');
+      alert('恭喜您中了'+data.jiaping);
 		  $("#jp_time").html("<h2>"+data.time+"</h2>");
 		  $("#jp_jp").html("<h2>"+data.jiaping+"</h2>");
 		  $("#jp_mobile").html("<h2>"+mobile+"</h2>");
 		  location.href = "#done";
 		}
-	      });
-            }
+	  });
+  }
 });
 return true;
 }
@@ -287,7 +289,10 @@ $("#lot").click(function(event)  {
   </div>
   <a href="javascript:history.back()" class="ui-btn">返回</a>
 
+
+  <h2>您可在活动结束后，凭此领奖页面，至指定地点领取奖品</h2>
   </div>
+
 </div> 
 
 <div data-role="page" id="wait">

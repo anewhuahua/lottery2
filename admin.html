@@ -105,7 +105,12 @@ $("#qizfinal").click(function(event){
 
 $("#getinfo").click(function(event){
   $.post( "/jp", function(data) {
-    
+    console.log(data);
+    info="";
+    for(i=0;i<data.length;i++){
+      info+="<p>"+data[i].mobile+": "+data[i].jiaping+"</p>";
+    } 
+    $("#information").html(info);
   });
 });
 
