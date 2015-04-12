@@ -62,10 +62,34 @@ router.route('/admin')
 	      res.json({message:"logout"});
       }
     } else if (msg == "go"){
+
       start = 1;
+      people = 0;
+      online={};
+      JP.remove({}, function(err) { 
+        console.log('collection removed') 
+      });
+      var jp = new JP();
+      jp.jp = "一等奖";
+      jp.amount = 1;
+      jp.save();
+      var jp = new JP();
+      jp.jp = "二等奖";
+      jp.amount =2;
+      jp.save();
+      var jp = new JP();
+      jp.jp = "三等奖";
+      jp.amount = 0;
+      jp.save();
+      Award.remove({}, function(err) { 
+        console.log('collection removed') 
+      });
+
       res.json({message:"go"});
     } else if (msg == "stop"){
       start = 0;
+      people = 0;
+      online={};
       res.json({message:"stop"});
     }
   });
@@ -190,6 +214,14 @@ router.route('/qiz')
 	  });
   });
 
+
+router.route('/jp')
+  .post(function(req, res){
+    Award.find({}, function(err,aws){
+      //console.log(aws);
+      res.json(aws);
+    });
+  });
 
 app.use('/', router);
 app.listen(port);

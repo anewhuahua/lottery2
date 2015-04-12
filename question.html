@@ -99,21 +99,21 @@ $("#postform").hover(function() {
 $.getJSON('qiz.json',function(data){
   questions = data.questions;
   console.log(questions);
-  console.log(questions[0].q);
 
-  for(i=0;i<questions.length;i++) {
-  j = i+1;
+  for(var i=0;i<questions.length;i++) {
+  var j = i+1;
   qname = "q"+j;
   var qiz = "";
   qiz = "<fieldset data-role='controlgroup'><legend>"+questions[i].q+"</legend>" + 
-	"<label for='a'>" + questions[i].a + "</label>" +
-        "<input type='radio' name='" + qname + "' id='a' value='" + questions[i].a + "'>" +
-	"<label for='b'>" + questions[i].b + "</label>" +
-        "<input type='radio' name='" + qname + "' id='b' value='" + questions[i].b + "'>" +
-	"<label for='c'>" + questions[i].c + "</label>" +
-        "<input type='radio' name='" + qname + "' id='c' value='" + questions[i].c + "'>" +
-	"<label for='d'>" + questions[i].d + "</label>" +
-        "<input type='radio' name='" + qname + "' id='d' value='" + questions[i].d + "'> </fieldset>" ;
+	"<label for='"+qname+"a'>" + questions[i].a + "</label>" +
+        "<input type='radio' name='" + qname + "' id='" +qname +"a' value='" + questions[i].a + "'>" +
+	"<label for='"+qname+"b'>" + questions[i].b + "</label>" +
+        "<input type='radio' name='" + qname + "' id='" +qname +"b' value='" + questions[i].b + "'>" +
+	"<label for='"+qname+"c'>" + questions[i].c + "</label>" +
+        "<input type='radio' name='" + qname + "' id='" +qname +"c' value='" + questions[i].c + "'>" +
+	"<label for='"+qname+"d'>" + questions[i].d + "</label>" +
+        "<input type='radio' name='" + qname + "' id='" +qname +"d' value='" + questions[i].d + "'> </fieldset>" ;
+  console.log("#q"+j);
   $("#q"+j).html(""+qiz);
   qr[j] = questions[i].r
   }
