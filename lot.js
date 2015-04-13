@@ -11,7 +11,7 @@ var port     = 2020;
 var router = express.Router();
 
 //tyson
-var intv = 2;
+var intv = 3;
 var people = 0;
 var start = 0;
 //var start = 1;
@@ -79,7 +79,7 @@ router.route('/admin')
       jp.save();
       var jp = new JP();
       jp.jp = "三等奖";
-      jp.amount = 0;
+      jp.amount = 3;
       jp.save();
       Award.remove({}, function(err) { 
         console.log('collection removed') 
@@ -141,14 +141,16 @@ var jiaping = function(id, cb) {
 	  award.save();
 
           var currentdate = new Date(); 
+          /*
           var datetime = "" + currentdate.getDate() + "/"
                 + (currentdate.getMonth()+1)  + "/" 
                 + currentdate.getFullYear() + " @ "  
                 + currentdate.getHours() + ":"  
                 + currentdate.getMinutes() + ":" 
                 + currentdate.getSeconds();
+          */
 
-          cb({message: "bingo", jiaping: jp.jp, time: datetime});
+          cb({message: "bingo", jiaping: jp.jp, time: currentdate});
 	} else {
       	  cb({message: "sorry"});
 	}

@@ -31,7 +31,9 @@ $.post( "/check", {id:mobile}, function(data) {
      $("#sorry").html("<h2>抱歉，您没有中奖</h2>");
      $("#information").html("");
   } else if (data.message == "bingo"){
-     $("#jp_time").html("<h2>"+data.time+"</h2>");
+     cur_time=new Date(data.time);
+     cur_time=cur_time.toString();
+     $("#jp_time").html("<h2>"+cur_time+"</h2>");
      $("#jp_jp").html("<h2>"+data.jiaping+"</h2>");
      $("#jp_mobile").html("<h2>"+mobile+"</h2>");
   }
@@ -53,9 +55,9 @@ setInterval(function(){
 alert("恭喜您，回答正确，点击进入抽奖界面");
 var a = Math.floor(Math.random() * 360);
 $("#image").rotate({
-            duration:6000,
+            duration:5000,
             angle: 0, 
-            animateTo:3800+a,
+            animateTo:3500+a,
             easing: $.easing.easeOutSine,
             callback: function(){
 
@@ -70,7 +72,9 @@ $("#image").rotate({
 		  location.href = "#wait";
 		} else if (data.message == "bingo") {
       alert('恭喜您中了'+data.jiaping);
-		  $("#jp_time").html("<h2>"+data.time+"</h2>");
+      cur_time=new Date(data.time);
+      cur_time=cur_time.toString();
+		  $("#jp_time").html("<h2>"+cur_time+"</h2>");
 		  $("#jp_jp").html("<h2>"+data.jiaping+"</h2>");
 		  $("#jp_mobile").html("<h2>"+mobile+"</h2>");
 		  location.href = "#done";
@@ -280,11 +284,11 @@ $("#lot").click(function(event)  {
   <div data-role="main" class="ui-content" id="info">
   <p id="sorry"></p>
   <div id="information">
-  <p><h2>日期</h2></p>
+  <p><h2>日期：</h2></p>
   <p><span id="jp_time"></span></p>
-  <p><h2>奖品</h2></p>
+  <p><h2>奖品：</h2></p>
   <p><span id="jp_jp"></span></p>
-  <p><h2>手机号</h2></p>
+  <p><h2>手机号：</h2></p>
   <p><span id="jp_mobile"></span></p>
   </div>
   <a href="javascript:history.back()" class="ui-btn">返回</a>
