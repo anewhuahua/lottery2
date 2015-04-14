@@ -217,6 +217,29 @@ router.route('/qiz')
   });
 
 
+
+router.route('/tip')
+  .post(function(req, res){
+    var tip = req.body.tip;
+    console.log(tip);
+    fs.writeFile('tip.json', JSON.stringify({tip:tip}), function (err) {
+        if (err) {
+          res.json({message:"tip update ok"});
+        }
+          res.json({message:"tip update fail"});
+    });
+  });
+
+router.route('/status')
+  .post(function(req, res){
+    if(start==0){
+      res.json({message:"stop"});
+    } else {
+      res.json({message:"start"});
+    }
+  });
+
+
 router.route('/jp')
   .post(function(req, res){
     Award.find({}, function(err,aws){

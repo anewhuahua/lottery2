@@ -18,6 +18,16 @@ var jiaping = [
 $(document).ready(function() {
 
 
+$.post("/status", function(data) {
+  if(data.message == "start"){
+    $("#go").hide();
+    $("#stop").show();
+  } else {
+    $("#go").show();
+    $("#stop").hide();
+  }
+});
+
 
 $("#q1o").click(function(event){
    options= "<option value ='" +   $("#q1a").val() + "'>" +  $("#q1a").val() + "</option>" + 
@@ -39,6 +49,12 @@ $("#q3o").click(function(event){
             "<option value ='" +   $("#q3c").val() + "'>" +  $("#q3c").val() + "</option>" + 
             "<option value ='" +   $("#q3d").val() + "'>" +  $("#q3d").val() + "</option>" ; 
    $("#q3r").html(options);
+});
+
+
+$.getJSON('tip.json',function(data) {
+  tip = data.tip;
+  $("#tip").val(tip);
 });
 
 $.getJSON('qiz.json',function(data){
@@ -102,6 +118,13 @@ $("#qizfinal").click(function(event){
   $.post("/qiz", {qiz:qiz}, function(data) {
   });
 });
+
+$("#tipfinal").click(function(event){
+  var tip = $("#tip").val();
+  $.post("/tip", {tip:tip}, function(data) {
+  });
+});
+
 
 $("#getinfo").click(function(event){
   $.post( "/jp", function(data) {
@@ -266,6 +289,18 @@ $("#auth").click(function(event){
 </div>
 
 
+<div data-role="page" id="page_tip">
+<div data-role="header">
+    <h1>修改中奖提示信息</h1>
+</div>
+<div data-role="main" class="ui-content">
+        <div class="ui-field-contain">
+        <label for="tip">提示信息:</label>
+        <textarea name="tip" id="tip"></textarea>
+        </div>
+        <a href="#start" class="ui-btn" id='tipfinal'>提交服务器</a>
+</div>
+</div>
 
 
 <div data-role="page" id="start">
@@ -283,6 +318,7 @@ $("#auth").click(function(event){
   <a href="#" class="ui-btn" id="stop">停止</a>
   <a href="#info_panel" class="ui-btn" id="getinfo">获奖名单</a>
   <a href="#qiz1" class="ui-btn" id="getqiz">修改题目</a>
+  <a href="#page_tip" class="ui-btn">修改中奖提示信息</a>
 </div>
 </div>
 

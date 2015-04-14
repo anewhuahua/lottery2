@@ -33,9 +33,9 @@ $.post( "/check", {id:mobile}, function(data) {
   } else if (data.message == "bingo"){
      cur_time=new Date(data.time);
      cur_time=cur_time.toString();
-     $("#jp_time").html("<h2>"+cur_time+"</h2>");
-     $("#jp_jp").html("<h2>"+data.jiaping+"</h2>");
-     $("#jp_mobile").html("<h2>"+mobile+"</h2>");
+     $("#jp_time").html(""+cur_time);
+     $("#jp_jp").html(""+data.jiaping);
+     $("#jp_mobile").html(""+mobile);
   }
 });
 }
@@ -74,9 +74,9 @@ $("#image").rotate({
       alert('恭喜您中了'+data.jiaping);
       cur_time=new Date(data.time);
       cur_time=cur_time.toString();
-		  $("#jp_time").html("<h2>"+cur_time+"</h2>");
-		  $("#jp_jp").html("<h2>"+data.jiaping+"</h2>");
-		  $("#jp_mobile").html("<h2>"+mobile+"</h2>");
+		  $("#jp_time").html(""+cur_time);
+		  $("#jp_jp").html(""+data.jiaping);
+		  $("#jp_mobile").html(""+mobile);
 		  location.href = "#done";
 		}
 	  });
@@ -88,19 +88,12 @@ return true;
 
 var mobile="";
 $(document).ready(function() {
-/*
-$("#postform").click(function(event) {
-  //$(this).width($(this).width() + 20); 
-  //$(this).height($(this).height() + 20); 
-  $(this).fadeOut(100);
-  $(this).fadeIn(100);
-  $("#lookform").submit();
+
+$.getJSON('tip.json',function(data) {
+  tip = data.tip;
+  $("#tip").html(tip);
 });
-$("#postform").hover(function() {
-  $(this).fadeOut(100);
-  $(this).fadeIn(100);
-});
-*/
+
 
 $.getJSON('qiz.json',function(data){
   questions = data.questions;
@@ -284,17 +277,16 @@ $("#lot").click(function(event)  {
   <div data-role="main" class="ui-content" id="info">
   <p id="sorry"></p>
   <div id="information">
-  <p><h2>日期：</h2></p>
-  <p><span id="jp_time"></span></p>
-  <p><h2>奖品：</h2></p>
-  <p><span id="jp_jp"></span></p>
-  <p><h2>手机号：</h2></p>
-  <p><span id="jp_mobile"></span></p>
+  <p>日期：</p>
+  <p id="jp_time"></p>
+  <p>奖品：</p>
+  <p id="jp_jp"></p>
+  <p>手机号：</p>
+  <p id="jp_mobile"></p>
   </div>
   <a href="javascript:history.back()" class="ui-btn">返回</a>
 
-
-  <h2>您可在活动结束后，凭此领奖页面，至指定地点领取奖品</h2>
+  <p id="tip"></p>
   </div>
 
 </div> 
