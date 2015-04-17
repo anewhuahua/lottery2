@@ -131,7 +131,7 @@ $("#getinfo").click(function(event){
     console.log(data);
     info="";
     for(i=0;i<data.length;i++){
-      info+="<p>"+data[i].mobile+": "+data[i].jiaping+"</p>";
+      info+="<p>&nbsp;&nbsp;"+data[i].mobile+": "+data[i].jiaping+"</p>";
     } 
     $("#information").html(info);
   });

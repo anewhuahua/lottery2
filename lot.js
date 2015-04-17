@@ -122,44 +122,85 @@ var jiaping = function(id, cb) {
   if (start) {
     online[id]=id;
     people = people+1;
-    if(people % intv == 0) {
 
-      JP.findOne({amount: {$gt:0}}, function(err,jp){
-	if(jp) {
-	  console.log(jp);
-          jp.amount-=1;
-	  console.log(jp);
-	  jp.save(function (err) {
-            if(err) {
-              console.error('ERROR!');
-            }
-	  });
-	
-	  var award = new Award();
-      	  award.mobile = id;
-      	  award.jiaping = jp.jp;
-	  award.save();
 
-          var currentdate = new Date(); 
-          /*
-          var datetime = "" + currentdate.getDate() + "/"
-                + (currentdate.getMonth()+1)  + "/" 
-                + currentdate.getFullYear() + " @ "  
-                + currentdate.getHours() + ":"  
-                + currentdate.getMinutes() + ":" 
-                + currentdate.getSeconds();
-          */
+    if(people == 3 || people == 21 || people == 33) {
+            JP.findOne({amount: {$gt:0}, jp: "三等奖"}, function(err,jp){
+                            if(jp) {
+                            console.log(jp);
+                            jp.amount-=1;
+                            console.log(jp);
+                            jp.save(function (err) {
+                                    if(err) {
+                                    console.error('ERROR!');
+                                    }
+                                    });
 
-          cb({message: "bingo", jiaping: jp.jp, time: currentdate});
-	} else {
-      	  cb({message: "sorry"});
-	}
-      });
+
+                            var award = new Award();
+                            award.mobile = id;
+                            award.jiaping = jp.jp;
+                            award.save();
+
+                            var currentdate = new Date(); 
+                            cb({message: "bingo", jiaping: jp.jp, time: currentdate});
+                            } else {
+                                    cb({message: "sorry"});
+                            }
+            });
+    } else if (people == 9 || people == 27) {
+            JP.findOne({amount: {$gt:0}, jp: "二等奖"}, function(err,jp){
+                            if(jp) {
+                            console.log(jp);
+                            jp.amount-=1;
+                            console.log(jp);
+                            jp.save(function (err) {
+                                    if(err) {
+                                    console.error('ERROR!');
+                                    }
+                                    });
+
+
+                            var award = new Award();
+                            award.mobile = id;
+                            award.jiaping = jp.jp;
+                            award.save();
+
+                            var currentdate = new Date(); 
+                            cb({message: "bingo", jiaping: jp.jp, time: currentdate});
+                            } else {
+                                    cb({message: "sorry"});
+                            }
+            });
+    } else if (people == 15) {
+            JP.findOne({amount: {$gt:0}, jp: "一等奖"}, function(err,jp){
+                            if(jp) {
+                            console.log(jp);
+                            jp.amount-=1;
+                            console.log(jp);
+                            jp.save(function (err) {
+                                    if(err) {
+                                    console.error('ERROR!');
+                                    }
+                                    });
+
+
+                            var award = new Award();
+                            award.mobile = id;
+                            award.jiaping = jp.jp;
+                            award.save();
+
+                            var currentdate = new Date(); 
+                            cb({message: "bingo", jiaping: jp.jp, time: currentdate});
+                            } else {
+                                    cb({message: "sorry"});
+                            }
+            });
     } else {
-      cb({message: "sorry"});
+       cb({message: "sorry"});
     }
   } else {
-    cb({message: "wait"});
+          cb({message: "wait"});
   }
 }
 router.route('/look') 
