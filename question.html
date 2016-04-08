@@ -13,13 +13,18 @@ if (location.hash) {
 }
 var qr = [];
 
-
+/*
 function errorPage() {
   alert("回答错误");
   $.post( "/error", {id:mobile}, function(data) {
     console.log(data);  
   });
   location.href = "#done";
+  return false;
+}
+*/
+function errorPage() {
+  alert("回答错误, 请重新选择");
   return false;
 }
 
