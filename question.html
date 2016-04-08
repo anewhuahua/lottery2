@@ -13,16 +13,35 @@ if (location.hash) {
 }
 var qr = [];
 
+
+function errorPage() {
+  alert("回答错误");
+  $.post( "/error", {id:mobile}, function(data) {
+    console.log(data);  
+  });
+  location.href = "#done";
+  return false;
+}
+
 function checkq(index) {
   var qa = $("#q"+index+" input[type='radio']:checked").val();
   console.log(qa+" "+qr[index]);
   if(qa==qr[index]) {
     return true;
   } else {
-    alert("回答错误，请重新答题");
-    return false;
+    return errorPage();
   }
 }
+
+
+var timestampToDate = function(timestamp) {
+  var date = new Date(timestamp);
+  var year = date.getFullYear();
+  var month = date.getMonth() + 1;
+  var day = date.getDate();
+  return "" + year + "年" + month + "月" + day + "日";
+}
+
 
 function checkJP() {
 $.post( "/check", {id:mobile}, function(data) {
@@ -31,9 +50,9 @@ $.post( "/check", {id:mobile}, function(data) {
      $("#sorry").html("<h2>抱歉，您没有中奖</h2>");
      $("#information").html("");
   } else if (data.message == "bingo"){
-     cur_time=new Date(data.time);
-     cur_time=cur_time.toString();
-     $("#jp_time").html(""+cur_time);
+     //cur_time=new Date(data.time);
+     //cur_time=cur_time.toString();
+     $("#jp_time").html(timestampToDate(data.time));
      $("#jp_jp").html(""+data.jiaping);
      $("#jp_mobile").html(""+mobile);
   }
@@ -42,7 +61,7 @@ $.post( "/check", {id:mobile}, function(data) {
 
 
 function checklot(){
-if (!checkq(3)) return false;
+if (!checkq(2)) return errorPage();
 /*
 var angle = 0;
 setInterval(function(){
@@ -72,9 +91,9 @@ $("#image").rotate({
 		  location.href = "#wait";
 		} else if (data.message == "bingo") {
       alert('恭喜您中了'+data.jiaping);
-      cur_time=new Date(data.time);
-      cur_time=cur_time.toString();
-		  $("#jp_time").html(""+cur_time);
+      //cur_time=new Date(data.time);
+      //cur_time=cur_time.toString();
+		  $("#jp_time").html(timestampToDate(data.time));
 		  $("#jp_jp").html(""+data.jiaping);
 		  $("#jp_mobile").html(""+mobile);
 		  location.href = "#done";
@@ -210,25 +229,9 @@ $("#lot").click(function(event)  {
   <div data-role="header">
     <h1>第二题</h1>
   </div>
-
   <div data-role="main" class="ui-content">
-    <form id="q2">
-    </form>
-    <a href="#pagethree" class="ui-btn" onclick="return checkq(2);">下一题</a>
-  </div>
-</div> 
 
-<div data-role="page" id="pagethree">
-  <div data-role="header">
-    <h1>第三题</h1>
-  </div>
-  <div data-role="main" class="ui-content">
-  <!--
-  <form method="post" action="./question">
-  <input type="submit" value="lotteryhaha">
-  </form>
-  -->
-  <form id="q3">
+  <form id="q2">
   </form>
   <a href="#lottery" class="ui-btn" id="lot"  onclick="return checklot();">进入抽奖页面</a>
 

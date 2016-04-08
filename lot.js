@@ -11,7 +11,7 @@ var port     = 2020;
 var router = express.Router();
 
 //tyson
-var intv = 3;
+var intv = 5;
 var people = 0;
 var start = 0;
 //var start = 1;
@@ -70,17 +70,10 @@ router.route('/admin')
         console.log('collection removed') 
       });
       var jp = new JP();
-      jp.jp = "一等奖";
-      jp.amount = 1;
+      jp.jp = "手机充值";
+      jp.amount = 1000000;
       jp.save();
-      var jp = new JP();
-      jp.jp = "二等奖";
-      jp.amount =2;
-      jp.save();
-      var jp = new JP();
-      jp.jp = "三等奖";
-      jp.amount = 3;
-      jp.save();
+   
       Award.remove({}, function(err) { 
         console.log('collection removed') 
       });
@@ -123,79 +116,27 @@ var jiaping = function(id, cb) {
     online[id]=id;
     people = people+1;
 
-
-    if(people == 3 || people == 21 || people == 33) {
-            JP.findOne({amount: {$gt:0}, jp: "三等奖"}, function(err,jp){
-                            if(jp) {
+    if(people%intv==0) {
+      JP.findOne({amount: {$gt:0}, jp: "手机充值"}, function(err,jp){
+                          if(jp) {
                             console.log(jp);
                             jp.amount-=1;
                             console.log(jp);
                             jp.save(function (err) {
-                                    if(err) {
-                                    console.error('ERROR!');
-                                    }
-                                    });
-
-
+                              if(err) {
+                                console.error('ERROR!');
+                              }
+                            });
                             var award = new Award();
                             award.mobile = id;
                             award.jiaping = jp.jp;
                             award.save();
-
                             var currentdate = new Date(); 
                             cb({message: "bingo", jiaping: jp.jp, time: currentdate});
-                            } else {
-                                    cb({message: "sorry"});
-                            }
-            });
-    } else if (people == 9 || people == 27) {
-            JP.findOne({amount: {$gt:0}, jp: "二等奖"}, function(err,jp){
-                            if(jp) {
-                            console.log(jp);
-                            jp.amount-=1;
-                            console.log(jp);
-                            jp.save(function (err) {
-                                    if(err) {
-                                    console.error('ERROR!');
-                                    }
-                                    });
-
-
-                            var award = new Award();
-                            award.mobile = id;
-                            award.jiaping = jp.jp;
-                            award.save();
-
-                            var currentdate = new Date(); 
-                            cb({message: "bingo", jiaping: jp.jp, time: currentdate});
-                            } else {
-                                    cb({message: "sorry"});
-                            }
-            });
-    } else if (people == 15) {
-            JP.findOne({amount: {$gt:0}, jp: "一等奖"}, function(err,jp){
-                            if(jp) {
-                            console.log(jp);
-                            jp.amount-=1;
-                            console.log(jp);
-                            jp.save(function (err) {
-                                    if(err) {
-                                    console.error('ERROR!');
-                                    }
-                                    });
-
-
-                            var award = new Award();
-                            award.mobile = id;
-                            award.jiaping = jp.jp;
-                            award.save();
-
-                            var currentdate = new Date(); 
-                            cb({message: "bingo", jiaping: jp.jp, time: currentdate});
-                            } else {
-                                    cb({message: "sorry"});
-                            }
-            });
+                          } else {
+                            cb({message: "sorry"});
+                          }
+        });
     } else {
        cb({message: "sorry"});
     }
@@ -229,6 +170,12 @@ router.route('/check')
     });
   });
 
+router.route('/error') 
+  .post(function(req, res) {
+    var id = req.body.id;
+    online[id] = id;
+    res.json({message: "error, cbwang"});
+  });
 
 router.route('/question')
   .get(function(req, res) {
@@ -279,6 +226,7 @@ router.route('/status')
       res.json({message:"start"});
     }
   });
+
 
 
 router.route('/jp')
