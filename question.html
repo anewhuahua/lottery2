@@ -52,7 +52,7 @@ function checkJP() {
 $.post( "/check", {id:mobile}, function(data) {
   console.log(data);
   if (data.message == "sorry"){
-     $("#sorry").html("<h2>抱歉，您没有中奖</h2>");
+     $("#sorry").html("<h2>很抱歉，您未中奖，感谢您的参与</h2>");
      $("#information").html("");
   } else if (data.message == "bingo"){
      //cur_time=new Date(data.time);
@@ -89,13 +89,13 @@ $("#image").rotate({
 		console.log(data);
 		
 		if (data.message == "sorry"){
-      alert('很抱歉，您未中奖');
+      alert('很抱歉，您未中奖，感谢您的参与');
 		  location.href = "#done";
 		} else if (data.message == "wait"){
       alert('抽奖活动尚未开始，请耐心等待');
 		  location.href = "#wait";
 		} else if (data.message == "bingo") {
-      alert('恭喜您中了'+data.jiaping);
+      alert('恭喜您中奖啦，奖品为50MB流量，将在24小时内为您充值到账，请注意查收');
       //cur_time=new Date(data.time);
       //cur_time=cur_time.toString();
 		  $("#jp_time").html(timestampToDate(data.time));
@@ -209,7 +209,7 @@ $("#lot").click(function(event)  {
 
 <div data-role="page" id="login">
   <div data-role="header">
-    <h1>欢迎参加答题抽奖</h1>
+    <h1>欢迎参与嘉定区税务局2016年度税收宣传月有奖问答活动</h1>
   </div>
 
   <div data-role="main" class="ui-content">
@@ -271,7 +271,7 @@ $("#lot").click(function(event)  {
   </div>
 
   <div data-role="main" class="ui-content">
-  <h2>你已经参加过抽奖活动</h2>
+  <h2>本活动单个手机号一天只能参与一次，敬请谅解</h2>
   <a href="#info" class="ui-btn" onclick="checkJP()">我的奖品</a>
 
   </div>
