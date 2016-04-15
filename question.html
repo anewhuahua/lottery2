@@ -95,7 +95,7 @@ $("#image").rotate({
       alert('抽奖活动尚未开始，请耐心等待');
 		  location.href = "#wait";
 		} else if (data.message == "bingo") {
-      alert('恭喜您中奖啦，奖品为50MB流量，将在24小时内为您充值到账，请注意查收');
+      alert("恭喜您中奖啦，奖品为50MB流量，将在24小时内为您充值到账，请注意查收\r\r"+"本次活动，每个中奖手机号码，仅限领50MB流量，敬请谅解，谢谢配合");
       //cur_time=new Date(data.time);
       //cur_time=cur_time.toString();
 		  $("#jp_time").html(timestampToDate(data.time));
@@ -209,12 +209,13 @@ $("#lot").click(function(event)  {
 
 <div data-role="page" id="login">
   <div data-role="header">
-    <h1>欢迎参与嘉定区税务局2016年度税收宣传月有奖问答活动</h1>
   </div>
 
   <div data-role="main" class="ui-content">
+    <h3>欢迎参与嘉定区税务局2016年度税收宣传月有奖问答活动</h3>
     <p><input type="text" name="login" id="mobile" value="" placeholder="请输入手机号码"></p>
     <a href="#" class="ui-btn" id="join">进入</a>
+    <h3>本次活动，每个中奖手机号码，限领50MB流量</h3>
   </div>
 </div> 
 
