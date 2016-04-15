@@ -12,6 +12,12 @@ if (location.hash) {
   location.href = location.hash;
 }
 var qr = [];
+var howmuch = 0;
+var yidong = ['134', '135', '136', '137', '138', '139', '147', '150', '151', '152', '157', 
+              '158', '159', '178', '182', '183', '184', '187', '188'];
+var liantong = ['130', '131', '132', '145', '155', '156', '171', '175', '176', '185', '186'];
+var dianxin = ['133', '149', '153', '173', '177', '180', '181', '189'];
+
 
 /*
 function errorPage() {
@@ -95,7 +101,7 @@ $("#image").rotate({
       alert('抽奖活动尚未开始，请耐心等待');
 		  location.href = "#wait";
 		} else if (data.message == "bingo") {
-      alert("恭喜您中奖啦，奖品为50MB流量，将在24小时内为您充值到账，请注意查收\r\r"+"本次活动，每个中奖手机号码，仅限领50MB流量，敬请谅解，谢谢配合");
+      alert("恭喜您中奖啦，奖品为"+ howmuch +"流量，将在24小时内为您充值到账，请注意查收\r\r"+"本次活动，每个中奖手机号码，仅限领一次流量，敬请谅解，谢谢配合");
       //cur_time=new Date(data.time);
       //cur_time=cur_time.toString();
 		  $("#jp_time").html(timestampToDate(data.time));
@@ -153,19 +159,35 @@ $("#join").click(function(event) {
   if (re.test(value)) {
     mobile=value;
     $("#hid").val(mobile);
+    if ( yidong.indexOf(value.slice(0,3))!=-1 ) {
+      console.log('yidong');
+      howmuch = '30M';
+    } else if ( liantong.indexOf(value.slice(0,3))!=-1 ) {
+      console.log('liantong');
+      howmuch = '50M';
+    } else if ( dianxin.indexOf(value.slice(0,3))!=-1 ) {
+      console.log('dianxin');
+      howmuch = '50M';
+    } else if ( value.slice(0,3) == '170' ) {
+      alert("不支持170号段充值");
+      return false;
+    } else {
+      alert("请输入正确的手机号码");
+      return false;
+    }
     
     $.post( "/selfcheck", {id:mobile}, function( data ) {
-	console.log(data);
-  	//$( ".result" ).html( data );
-        if (data.message=="wait"){
-	  //$("#join").attr("href", "#wait");
-    	  location.href = "#wait";
-        } else if (data.message=="go"){
-	  //$("#join").attr("href", "#pageone");
-    	  location.href = "#pageone";
-	} else if (data.message=="done") {
-    	  location.href = "#done";
-	}
+	     console.log(data);
+  	   //$( ".result" ).html( data );
+       if (data.message=="wait"){
+	       //$("#join").attr("href", "#wait");
+    	   location.href = "#wait";
+       } else if (data.message=="go"){
+	       //$("#join").attr("href", "#pageone");
+    	   location.href = "#pageone";
+	     } else if (data.message=="done") {
+    	   location.href = "#done";
+	     }
     });
 
     //return true;
@@ -215,7 +237,12 @@ $("#lot").click(function(event)  {
     <h3>欢迎参与嘉定区税务局2016年度税收宣传月有奖问答活动</h3>
     <p><input type="text" name="login" id="mobile" value="" placeholder="请输入手机号码"></p>
     <a href="#" class="ui-btn" id="join">进入</a>
-    <h3>本次活动，每个中奖手机号码，限领50MB流量</h3>
+    <h3>本次活动，每个中奖手机号码，限领一次流量</h3>
+	<p>充值说明如下:</p>
+	<p>1. 流量银行限中国移动、中国电信、中国联通用户（不含虚拟运营商）使用，流量可全国漫游（不含港澳台），支持2G/3G/4G网络。</p>
+	<p>2. 流量充值中奖后将于2日工作内充入输入的手机号码中，充值成功后该手机号会收到短信提醒，具体生效时间以运营商告知为准。</p>
+	<p>3. 如持卡人选择充值的手机号码为异常状态，如：停机、欠费、黑名单、未实名（身份资料不全，身份证非18位等），号码异常、携号转网等用户，将无法充值成功。</p>
+	<p>4. 送出的流量仅当月有效，次月清零。</p>
   </div>
 </div> 
 
