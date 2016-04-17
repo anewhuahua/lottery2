@@ -11,7 +11,7 @@ var port     = 2020;
 var router = express.Router();
 
 //tyson
-var intv = 10;
+var intv = 3;
 var people = 0;
 var start = 0;
 //var start = 1;
@@ -71,7 +71,7 @@ router.route('/admin')
       });
       var jp = new JP();
       jp.jp = "手机充值";
-      jp.amount = 300;
+      jp.amount = 400;
       jp.save();
    
       Award.remove({}, function(err) { 
